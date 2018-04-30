@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <link href="https://fonts.googleapis.com/css?family=Black+Han+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet"> 
+    <style>
+       #map {
+        height: 100%;
+        width: 100%;
+		float:left;
+		
+       }
+	   #layer1,#grayOut{
+			width:100%;
+			height:100%;
+			position: absolute;
+			z-index:2;
+			display:flex;
+			align-items:center;
+			justify-content:center;
+			
+	   }
+	   #confirmDiv{
+			width:100%;
+			height:5%;
+			display:none;
+			position:absolute;
+			float:left;
+			z-index:3;
+			background:#DC3023;
+			color:white;
+			bottom:0;
+			text-align:center;
+			font-family:Black Han Sans', sans-serif;
+			align-items:center;
+			justify-content:center;
+	   }
+	   #grayOut{
+			z-index:1;
+			background:gray;
+			opacity:.3;
+	   }
+	   #selectEvent{
+			width: 65%;
+			height:60%;
+			background:white;
+			border-radius:0.2%;
+			display:flex;
+			flex-direction:column;
+			justify-content:space-evenly;
+			color:white;
+	   }
+	   .selectButton{
+			width:80%;
+			height:25%;
+			background:#DC3023;
+			margin:auto;
+			font-size:1.5em;
+			display:flex;
+			justify-content:center;
+			align-items:center;
+			border-radius: 1500px;
+			
+	   }
+	   .selectButton,#dataAdd,#confirmDiv:hover {
+			background:#C91F37;
+	   }
+	   #setUpBox{
+			width:40%;
+			
+			background:white;
+			display:none;
+			
+	   }
+	   html,body,#wrapper{
+			height:100%;
+			body:100%;
+			margin:0;
+			position:relative;
+			cursor:pointer;
+			font-family: 'Karla', sans-serif;
+	   }
+	   #dataAdd{
+			width:100%;
+			height:3em;
+			background:red;
+			display:flex;
+			justify-content:center;
+			align-items:center;
+			color:white;
+			
+	   }
+	   
+		#desc,#modelType{
+			width:100%;
+			padding:0;
+			margin:0;
+			border:none;
+			
+			
+			
+		}
+		#desc{
+			margin-bottom:2em;
+		}
+		
+	
+		#phoneInfo,#back{
+			display:none;
+			position:absolute;
+			float:left;
+			z-index:3;
+			padding:3em;
+			background:white;
+			margin-top:2em;
+			margin-left:2em;
+		}
+		#desc,#modelType{
+			height:2em%;
+		}
+		#back{
+			right:0;
+			display:none;
+			padding:.5em;
+			border-radius:1500px;
+			padding-left:2em;
+			padding-right:2em;
+		}
+		#back:hover{
+			background:#DC3023;
+			color:white;
+		}
+		#contact:hover{
+			background:#DC3023;
+			color:white;
+		}
+		#contact{
+			display:inline-block;
+			border-radius:1500px;
+			border:1px solid black;
+			padding-left:1.5em;
+			padding-right:1.5em;
+			margin:auto;
+			font-size:1.36em;
+			margin-top:2.3em;
+			
+		}
+		#closeBox{
+		position:absolute;
+			top:.05em;
+			right:.05em;
+			font-size:1.5em;
+			position:absolute;
+			
+		}
+    </style>
+  </head>
+  <body>
+	
+    <div id="map"></div>
+	<div id="grayOut"></div>
+	<div id="layer1">
+		<div id="selectEvent">
+			<div class="selectButton" onclick="addPhone()" id="addPhone">Found a Phone? Click here to add it</div>
+			<div class="selectButton" onclick="showPhones()" id="findPhone">Looking for your phone? Click here to look for it</div>
+		</div>
+		<div id="setUpBox">
+			<div id="foundAround">I found the phone..<br><input id ="desc" type="text" placeholder="under a tree"></div>
+			<div id="foundAround">Model is<br><input id ="modelType" type="text"  placeholder="iphone 6"></div>
+			<div id="dataAdd" onclick="dataAdd()">Confirm</div>
+		</div>
+		
+		</div>
+		
+	<div id="phoneInfo">
+			<span onclick= "closeBox()"id="closeBox">&times</span>
+			<h2>Model </h2>
+			<div id="modelNumber"></div>
+			<h2>Found the phone </h2>
+			<div id="foundAroundDisplay"></div>
+			<div id="contact">Contact</div>
+		</div>
+	
+	<div id="back" onclick="back()" >back</div>
+	<div onclick="setInfo()" id="confirmDiv"><p>Place Marker Here? (Click me when done)</p></div>
+	
+    <script>
+		var map;
+		var gray = document.getElementById("grayOut");
+		var layer = document.getElementById("layer1");
+		var phones = [];
+      function initMap() {
+        
+		
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 20,
+        });
+		
+		if (navigator.geolocation){
+			navigator.geolocation.getCurrentPosition(function(position){
+			 var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+				map.setCenter(pos);
+			},undefined)
+			
+		}
+	
+      }
+	  function hideGray(){
+		gray.style.display = "none";
+	  }
+	  function hideLayer(){
+		layer.style.display = "none";
+	  }
+	  function showGray(){
+		gray.style.display = "flex";
+	  }
+	  function showLayer(){
+		layer.style.display = "flex";
+	  }
+	  var confirm;
+	  function addPhone(){
+		for (var i = 0;i < markersArray.length;i++){
+			markersArray[i].setMap(null);
+		}
+		hideGray();
+		hideLayer();
+		confirm = document.getElementById("confirmDiv");
+		confirm.style.display = "flex";
+		
+		google.maps.event.addListener(map, "click", (event) =>{markerPlacement(event);});
+	  }
+	  
+	  var cMark = "first";
+	function markerPlacement(event){
+	
+		if (cMark !== "first")
+			cMark.setMap(null);
+		cMark = new google.maps.Marker({
+				position: event.latLng,
+				map: map
+			  });
+		
+	  }
+	  function setInfo(){
+		if (cMark !== "first"){
+		document.getElementById("modelType").value = "";
+		document.getElementById("desc").value = "";
+	  confirm.style.display = "none";
+		showLayer();
+		showGray();
+		
+		document.getElementById("selectEvent").style.display = "none";
+		document.getElementById("setUpBox").style.display="inline-block";
+		}
+	  }
+	  function dataAdd(){
+	  
+		phones.push(
+			{
+				pos:cMark.position,
+				description: document.getElementById("desc").value,
+				model: document.getElementById("modelType").value
+			}
+		);
+		 cMark.setMap(null);
+	  cMark = "first";
+		document.getElementById("selectEvent").style.display = "flex";
+		document.getElementById("setUpBox").style.display = "none";
+		google.maps.event.clearListeners(map, 'click');
+	  }
+	 var markersArray = [];
+	  function showPhones(){
+		document.getElementById("back").style.display = "block";
+		hideGray();
+		hideLayer();
+		
+		for (var i =0 ;i < phones.length;i++){
+			
+			var marker = new google.maps.Marker({
+				position: phones[i].pos,
+				map: map,
+				loc:i
+			  });
+			  markersArray.push( marker);
+			google.maps.event.addListener(marker, 'click', (function(marker, i) {
+
+			  return function() {
+				openBox(i);
+			  }
+
+    })(marker, i));			  
+	  }
+	  
+	  }
+	  var opened= false;
+	  function openBox(id){	
+		console.log( phones[id].model
+		);
+			if (!opened){
+				document.getElementById("phoneInfo").style.display = "block";
+				opened = true;
+				}
+			document.getElementById("modelNumber").innerHTML = phones[id].model;
+			document.getElementById("foundAroundDisplay").innerHTML = phones[id].description;
+		
+	  }
+	  function back(){
+		opened = false;
+		document.getElementById("phoneInfo").style.display = "none";
+		document.getElementById("back").style.display = "none";
+		showGray();
+		showLayer();
+		
+	  }
+	  function closeBox(){
+		document.getElementById("phoneInfo").style.display = "none";
+		opened = false;
+	  }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASE77RZ7wJ0uAO5jVUQCvD8BwZnehBFfA&callback=initMap">
+    </script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Black+Han+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+	 <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    <div id="map"></div>
+    <div id="grayOut"></div>
+    <div id="layer1">
+        <div id="selectEvent">
+            <div class="selectButton" onclick="addPhone()" id="addPhone">Found a Phone? Click here to add it</div>
+            <div class="selectButton" onclick="showPhones()" id="findPhone">Looking for your phone? Click here to look for it</div>
+        </div>
+        <div id="setUpBox">
+            <div id="foundAround">I found the phone..
+                <br>
+                <input id="desc" type="text" placeholder="under a tree">
+            </div>
+            <div id="foundAround">Model is
+                <br>
+                <input id="modelType" type="text" placeholder="iphone 6">
+            </div>
+            <div id="dataAdd" onclick="dataAdd()">Confirm</div>
+        </div>
+    </div>
+    <div id="phoneInfo">
+        <span onclick="closeBox()" id="closeBox">&times</span>
+        <h2>Model </h2>
+        <div id="modelNumber"></div>
+        <h2>Found the phone </h2>
+        <div id="foundAroundDisplay"></div>
+        <div id="contact">Contact</div>
+    </div>
+    <div id="back" onclick="back()">back</div>
+    <div onclick="setInfo()" id="confirmDiv">
+        <p>Place Marker Here? (Click me when done)</p>
+    </div>
+
+    <script>
+   
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASE77RZ7wJ0uAO5jVUQCvD8BwZnehBFfA&callback=initMap&libraries=places"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
